@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Narrativas de Paz</title>
+
+    <link rel="stylesheet" href="./src/css/style.css">
+    <link rel="stylesheet" href="./src/css/animate.css">
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="functions.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            initialize();
+        });
+
+
+        function getPosition(mouseEvent, sigCanvas) {
+            var x, y;
+            if (mouseEvent.pageX != undefined && mouseEvent.pageY != undefined) {
+                x = mouseEvent.pageX;
+                y = mouseEvent.pageY;
+            } else {
+                x = mouseEvent.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                y = mouseEvent.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
+
+            return {
+                X: x - sigCanvas.offsetLeft,
+                Y: y - sigCanvas.offsetTop
+            };
+        }
+
+        function initialize() {
+            var sigCanvas = document.getElementById("canvasSignature");
+            var context = sigCanvas.getContext("2d");
+            context.strokeStyle = 'Black';
+
+            var is_touch_device = 'ontouchstart' in document.documentElement;
+
+            if (is_touch_device) {
+                var drawer = {
+                    isDrawing: false,
+                    touchstart: function (coors) {
+                        context.beginPath();
+                        context.moveTo(coors.x, coors.y);
+                        this.isDrawing = true;
+                    },
+                    touchmove: function (coors) {
+                        if (this.isDrawing) {
+                            context.lineTo(coors.x, coors.y);
+                            context.stroke();
+                        }
+                    },
+                    touchend: function (coors) {
+                        if (this.isDrawing) {
+                            this.touchmove(coors);
+                            this.isDrawing = false;
+                        }
+                    }
+                };
+
+                function draw(event) {
+
+                    var coors = {
+                        x: event.targetTouches[0].pageX,
+                        y: event.targetTouches[0].pageY
+                    };
+
+                    var obj = sigCanvas;
+
+                    if (obj.offsetParent) {
+                        do {
+                            coors.x -= obj.offsetLeft;
+                            coors.y -= obj.offsetTop;
+                        }
+                        while ((obj = obj.offsetParent) != null);
+                    }
+
+                    drawer[event.type](coors);
+                }
+
+                function clearCanvas() {
+                    context.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+                }
+
+
+                sigCanvas.addEventListener('touchstart', draw, false);
+                sigCanvas.addEventListener('touchmove', draw, false);
+                sigCanvas.addEventListener('touchend', draw, false);
+
+                sigCanvas.addEventListener('touchmove', function (event) {
+                    event.preventDefault();
+                }, false);
+            } else {
+
+                $("#canvasSignature").mousedown(function (mouseEvent) {
+                    var position = getPosition(mouseEvent, sigCanvas);
+
+                    context.moveTo(position.X, position.Y);
+                    context.beginPath();
+
+                    $(this).mousemove(function (mouseEvent) {
+                        drawLine(mouseEvent, sigCanvas, context);
+                    }).mouseup(function (mouseEvent) {
+                        finishDrawing(mouseEvent, sigCanvas, context);
+                    }).mouseout(function (mouseEvent) {
+                        finishDrawing(mouseEvent, sigCanvas, context);
+                    });
+                });
+
+            }
+        }
+
+        function drawLine(mouseEvent, sigCanvas, context) {
+
+            var position = getPosition(mouseEvent, sigCanvas);
+
+            context.lineTo(position.X, position.Y);
+            context.stroke();
+        }
+
+
+
+        function finishDrawing(mouseEvent, sigCanvas, context) {
+            drawLine(mouseEvent, sigCanvas, context);
+
+            context.closePath();
+
+            $(sigCanvas).unbind("mousemove")
+                .unbind("mouseup")
+                .unbind("mouseout");
+        }
+    </script>
+
+
+
+</head>
+
+<body>
+
+
+    <div id="wrapper">
+        <section>
+            <header id="#header">
+                <a href="#" id="menu_on">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </header>
+            <nav>
+                <ul>
+                    <li><a href="./Index.html">Narrativas de paz</a></li>
+                    <li><a href="./Ayudanos.html">Ayúdanos a construir más paz</a></li>
+                    <li><a href="./Explora.html">Explora la paz</a></li>
+                </ul>
+            </nav>
+        </section>
+        <section id="content">
+            <div style="text-align: left;">
+                <h1 style="color: #7E6BB0"><b>Creación de narrativas<b></h1>
+            </div>
+
+        </section>
+        <div class="aaa">
+            <div>
+                <img class="animated zoomIn" src="./src/img/Dialogo-03.svg" width="100%" alt="">
+            </div>
+
+
+            <section id="content" style="padding-top: 0px; color: rgba(0, 0, 0, 0.5)">
+
+                (Máximo 150 caracteres)
+                <br>
+                <br>
+                <div class="formbajo">
+                    <textarea maxlength="150" name="definiciondepaz" rows=5 cols=40>
+
+                    </textarea>
+                </div>
+                <form action="#">
+                    <br>
+                    <a href=""><img class="animated zoomIn www" src="./src/img/guardarTexto.svg" id="siguiente" alt=""></a>
+                </form>
+                <br>
+            </section>
+        </div>
+
+        <div class="derecha">
+            <div>
+                <img class="animated zoomIn" src="./src/img/Dialogo-04.svg" width="100%" alt="">
+            </div>
+        </div>
+
+
+        <section id="content">
+
+            <div id="canvasDiv">
+                <canvas id="canvasSignature" width="320px" height="350px"
+                    style="border:2px solid #444444 ; background-color: white;"></canvas>
+            </div>
+
+        </section>
+
+        <section id="content" style="padding-top: 0px;">
+
+            <div>
+                <form action="#">
+                    <br>
+                    <a href=""><img class="animated zoomIn www" src="./src/img/guardarDibujo.svg" id="siguiente" alt=""></a>
+                </form>
+            </div>
+
+        </section>
+
+        <div class="aaa">
+            <div>
+                <br>
+                <img class="animated zoomIn" src="./src/img/Dialogo-05.svg" width="100%" alt="">
+            </div>
+        </div>
+
+        <section id="content" style="padding-top: 0px;">
+
+            <div>
+                    <a href="ResultadosCreacionNarrativas.html"><img class="animated zoomIn www" src="./src/img/siguiente.svg" id="siguiente" alt=""></a>
+            </div>
+
+        </section>
+
+
+    </div>
+
+    <footer style="display: flex; background-color: rgb(255, 255, 255);" >
+            <div style="margin-right: 0px; width: 33%; text-align: center" class="colum1">
+                    <img style="width: 40%; margin-top: 5px;" src="./src/img/alcaldiaCali2.png">
+            </div>
+            <div style="margin-right: 10px; width: 33%; text-align: center" class="colum2">
+                    <img style="width: 40%; margin-top: 5px;"  src="./src/img/alcaldiaCali.png">
+            </div>
+            <div style="margin-right: 10px; width: 33%; text-align: center" class="colum3">
+                <img style="width: 80%; margin-top: 10px;" src="./src/img/logoIcesi.png">
+            </div>
+        </footer>
+
+
+
+</body>
+
+</html>
